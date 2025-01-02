@@ -235,6 +235,7 @@ var rootCmd = &cobra.Command{
 
 			if !flags.reuseinstances { // we are spawning the instances
 				torInstance, err := tor.Start(dialCtx, &tor.StartConf{
+					ExePath:           flags.torPath,
 					TorrcFile:         file.Name(),
 					NoAutoSocksPort:   true,
 					EnableNetwork:     true,
