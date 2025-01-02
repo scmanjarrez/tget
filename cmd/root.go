@@ -335,7 +335,7 @@ var rootCmd = &cobra.Command{
 				}
 
 				req, _ := http.NewRequest(flags.method, url, nil)
-				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.body, flags.useragent)
+				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.useragent, flags.body)
 
 				baseFileName := path.Base(req.URL.Path)
 				if baseFileName == "." || baseFileName == "/" {
