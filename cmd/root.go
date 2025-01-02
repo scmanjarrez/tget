@@ -430,7 +430,7 @@ func init() {
 	// Headers, cookies, ssl, etc
 	rootCmd.Flags().BoolVarP(&flags.followRedirect, "follow-redirect", "f", false, "follow HTTP redirects")
 	rootCmd.Flags().BoolVarP(&flags.unsafeTLS, "unsafe-tls", "k", false, "skip TLS certificates validation")
-	rootCmd.Flags().StringSliceVarP(&flags.headers, "header", "H", []string{}, "header(s) to include in all requests")
+	rootCmd.Flags().StringArrayVarP(&flags.headers, "header", "H", []string{}, "header(s) to include in all requests")
 	rootCmd.Flags().StringVarP(&flags.cookies, "cookies", "b", "", "cookie(s) to include in all requests")
 	rootCmd.Flags().StringVarP(&flags.body, "data", "d", "", "body of request to send")
 	rootCmd.Flags().StringVarP(&flags.useragent, "useragent", "U", fmt.Sprintf("tget/%v", tget.Version), "useraget to use when sending requests")
