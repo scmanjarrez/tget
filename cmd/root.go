@@ -336,7 +336,7 @@ var rootCmd = &cobra.Command{
 				}
 
 				req, _ := http.NewRequest(flags.method, url, nil)
-				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.body, flags.useragent)
+				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.useragent, flags.body)
 
 				baseFileName := path.Base(req.URL.Path)
 				if baseFileName == "." || baseFileName == "/" {
@@ -431,7 +431,7 @@ func init() {
 	// Headers, cookies, ssl, etc
 	rootCmd.Flags().BoolVarP(&flags.followRedirect, "follow-redirect", "f", false, "follow HTTP redirects")
 	rootCmd.Flags().BoolVarP(&flags.unsafeTLS, "unsafe-tls", "k", false, "skip TLS certificates validation")
-	rootCmd.Flags().StringSliceVarP(&flags.headers, "header", "H", []string{}, "header(s) to include in all requests")
+	rootCmd.Flags().StringArrayVarP(&flags.headers, "header", "H", []string{}, "header(s) to include in all requests")
 	rootCmd.Flags().StringVarP(&flags.cookies, "cookies", "b", "", "cookie(s) to include in all requests")
 	rootCmd.Flags().StringVarP(&flags.body, "data", "d", "", "body of request to send")
 	rootCmd.Flags().StringVarP(&flags.useragent, "useragent", "U", fmt.Sprintf("tget/%v", tget.Version), "useraget to use when sending requests")
