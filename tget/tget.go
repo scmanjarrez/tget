@@ -20,17 +20,13 @@ var TorrcTemplate string
 type TorGet struct {
 }
 
-var Version = "v0.3.1"
+var Version = "v0.3.2"
 
 func PrepareRequest(req *http.Request, headers []string, cookies, useragent, body string) {
 	for _, h := range headers {
-		split := strings.Split(h, "=")
+		split := strings.SplitN(h, ":", 2)
 		k := split[0]
-		v := ""
-		if len(split) > 1 {
-			v = strings.Join(split[1:], "=")
-		}
-
+		v := strings.TrimSpace(split[1])
 		req.Header.Add(k, v)
 	}
 	if cookies != "" {
