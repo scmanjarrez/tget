@@ -235,6 +235,7 @@ var rootCmd = &cobra.Command{
 
 			if !flags.reuseinstances { // we are spawning the instances
 				torInstance, err := tor.Start(dialCtx, &tor.StartConf{
+					ExePath:           flags.torPath,
 					TorrcFile:         file.Name(),
 					NoAutoSocksPort:   true,
 					EnableNetwork:     true,
@@ -335,7 +336,7 @@ var rootCmd = &cobra.Command{
 				}
 
 				req, _ := http.NewRequest(flags.method, url, nil)
-				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.body, flags.useragent)
+				tget.PrepareRequest(req, flags.headers, flags.cookies, flags.useragent, flags.body)
 
 				baseFileName := path.Base(req.URL.Path)
 				if baseFileName == "." || baseFileName == "/" {
