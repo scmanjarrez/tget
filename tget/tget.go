@@ -45,7 +45,7 @@ func DownloadUrl(c *http.Client, req *http.Request, outPath string, followRedir,
 	currentSize := 0
 	if stat, err := os.Stat(outPath); err == nil {
 		// TODO: implement proper resume with etag/filehash/Ifrange etc, check if accpet-range is supported, etc
-		if tryContinue && !overwrite {
+		if tryContinue {
 			currentSize := stat.Size()
 			//log.Printf("%v found on disk, user asked to attempt a resume (%d)\n", outPath, currentSize)
 			req.Header.Set("range", fmt.Sprintf("bytes=%d-", currentSize))
@@ -123,14 +123,17 @@ func DownloadUrl(c *http.Client, req *http.Request, outPath string, followRedir,
 	//log.Println(out.Name(), "done")
 }
 
-func GetFilename(file string, attempt int) string {
-	if _, err := os.Stat(file); err == os.ErrNotExist {
-		return file // valid filename, return
-	} else if err == nil {
-		return GetFilename(fmt.Sprintf("%s.%d", file, attempt+1), attempt+1)
+func GetFilename(file string) string {
+	attempt := 0
+	currentFile := file
+	for {
+		_, err := os.Stat(currentFile)
+		if os.IsNotExist(err) {
+			return currentFile
+		}
+		attempt++
+		currentFile = fmt.Sprintf("%s.%d", file, attempt)
 	}
-
-	return file
 }
 
 func GetFreePorts(n int) (ports []int, err []error) {
