@@ -46,7 +46,7 @@ type tgetFlags struct {
 	host           string
 	verbose        bool
 	maxWait        int
-	ovewrite       bool
+	overwrite      bool
 	tryContinue    bool
 	testDomain     string
 	keepalive      bool
@@ -346,11 +346,17 @@ var rootCmd = &cobra.Command{
 						log.Printf("instance %d will download %v (%v)\n", i, baseFileName, req)
 					}
 				}
-				if !flags.ovewrite {
-					baseFileName = tget.GetFilename(baseFileName, 0) // if path is / or "" we should save as index.html.<attempt>
-				}
 
 				outFilePath := path.Join(flags.outPath, baseFileName)
+				err = os.MkdirAll(flags.outPath, os.ModePerm)
+				if err != nil {
+					log.Fatalf("failed to create directory: %v\n", err)
+					return
+				}
+
+				if !flags.tryContinue && !flags.overwrite {
+					outFilePath = tget.GetFilename(outFilePath) // if path is / or "" we should save as index.html.<attempt>
+				}
 
 				//TODO: rework to make it look better maybe: filenam [bar] [ETA] [status/percentage]?
 				bar := bars.AddBar(
@@ -374,7 +380,7 @@ var rootCmd = &cobra.Command{
 
 				p.Submit(func() {
 					defer wg.Done()
-					tget.DownloadUrl(clients[i], req, outFilePath, flags.followRedirect, flags.tryContinue, flags.ovewrite, bar)
+					tget.DownloadUrl(clients[i], req, outFilePath, flags.followRedirect, flags.tryContinue, flags.overwrite, bar)
 				})
 			}
 		}
@@ -420,7 +426,7 @@ func init() {
 	rootCmd.Flags().StringVar(&flags.testDomain, "test-domain", "https://thatsn0tmy.site", "website to use while testing if Tor is up")
 	rootCmd.Flags().StringVarP(&flags.outPath, "out-path", "o", cwd, "path to save downloaded files in")
 	rootCmd.Flags().BoolVarP(&flags.verbose, "verbose", "v", false, "be (very) verbose")
-	rootCmd.Flags().BoolVarP(&flags.ovewrite, "ovewrite", "O", false, "overwrite file(s) if they already exist")
+	rootCmd.Flags().BoolVarP(&flags.overwrite, "overwrite", "O", false, "overwrite file(s) if they already exist")
 	rootCmd.Flags().BoolVar(&flags.tryContinue, "continue", false, "attempt to continue a previously interrupted download")
 	rootCmd.Flags().IntVar(&flags.maxWait, "timeout", 0, "max time to wait for Tor before canceling (0: no timeout)")
 	rootCmd.Flags().BoolVar(&flags.keepalive, "keep-alive", false, "do not close Tor instances when done")
