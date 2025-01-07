@@ -346,11 +346,17 @@ var rootCmd = &cobra.Command{
 						log.Printf("instance %d will download %v (%v)\n", i, baseFileName, req)
 					}
 				}
-				if !flags.tryContinue && !flags.overwrite {
-					baseFileName = tget.GetFilename(baseFileName) // if path is / or "" we should save as index.html.<attempt>
-				}
 
 				outFilePath := path.Join(flags.outPath, baseFileName)
+				err = os.MkdirAll(flags.outPath, os.ModePerm)
+				if err != nil {
+					log.Fatalf("failed to create directory: %v\n", err)
+					return
+				}
+
+				if !flags.tryContinue && !flags.overwrite {
+					outFilePath = tget.GetFilename(outFilePath) // if path is / or "" we should save as index.html.<attempt>
+				}
 
 				//TODO: rework to make it look better maybe: filenam [bar] [ETA] [status/percentage]?
 				bar := bars.AddBar(
